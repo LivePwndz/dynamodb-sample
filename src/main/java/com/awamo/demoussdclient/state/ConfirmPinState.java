@@ -26,7 +26,7 @@ public class ConfirmPinState implements UssdState {
         String value = data.getValue();
 
         Optional<String> confirmPinO = StateUtil.extractRootStateValue(value);
-        Optional<String> pinO = StateUtil.extractStepValue( value, StateUtil.getStateDepth(value) - 1);
+        Optional<String> pinO = StateUtil.extractStateValue( value, StateUtil.getStateDepth(value) - 1);
 
         if(!confirmPinO.isPresent() || !pinO.isPresent()){
             data.setUssdResponse("Invalid PIN data. \n Try again.");

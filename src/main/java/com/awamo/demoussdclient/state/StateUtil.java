@@ -8,7 +8,7 @@ import java.util.Optional;
 public class StateUtil {
 
     private static String[] tokenizeStepValues( String value ){
-        // TODO Remove navigation values
+        // TODO Clean up value, i.e. remove navigation values
         return value.split("\\*");
     }
 
@@ -16,7 +16,7 @@ public class StateUtil {
         return tokenizeStepValues(value).length;
     }
 
-    public static Optional< String > extractStepValue( String value, int depth ) {
+    public static Optional< String > extractStateValue(String value, int depth ) {
         String[] tokens = tokenizeStepValues(value);
         if( tokens.length < 1 || depth > tokens.length ){
             return Optional.empty();
@@ -25,7 +25,7 @@ public class StateUtil {
     }
 
     public static Optional< String > extractRootStateValue( String value ){
-        return extractStepValue(value, getStateDepth(value));
+        return extractStateValue(value, getStateDepth(value));
     }
 
 

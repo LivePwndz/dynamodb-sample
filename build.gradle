@@ -15,4 +15,12 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// https://mvnrepository.com/artifact/org.mongodb/mongodb-driver
+	compile group: 'org.mongodb', name: 'mongodb-driver', version: '3.8.2'
+	compile 'com.amazonaws:aws-java-sdk-dynamodb:1.11.475'
+	compile 'com.amazonaws:aws-java-sdk-ses:1.11.475'
+	compile 'com.amazonaws:aws-java-sdk-core:1.11.475'
+	compile 'com.amazonaws:aws-java-sdk-sns:1.11.534'
+
+
 }

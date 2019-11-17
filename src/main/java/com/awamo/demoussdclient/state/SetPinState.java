@@ -16,7 +16,6 @@ public class SetPinState implements UssdState {
         if( validAndSetNewMenu(data)){
             data.setState( new ConfirmPinState());
         } else {
-
             data.setState( new TerminateUssdState(data));
         }
 
