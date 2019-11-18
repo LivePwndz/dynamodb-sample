@@ -173,6 +173,7 @@ public class DynamoClient {
         saveTenant();
         saveSubscriber();
         updateSubscriber();
+        getTenantCreds();
         putItem2();
         findTenantsByMsisdn();
         ddbClient.shutdown();
@@ -209,11 +210,11 @@ public class DynamoClient {
         DTenant subscriber = new DTenant();
         Map expected = new HashMap();
 
-        int tenantId = 1;
+        String tenantId = "1";
         String tenantCredId = TENANT_TABLE_PARTITION_KEY_PREFIX+tenantId;
 
         subscriber.setTenantCredId(tenantCredId);
-        subscriber.setTenantId("3");
+        subscriber.setTenantId(tenantId);
         subscriber.setUsername("sample ussd user");
         subscriber.setPassword("tenant_"+tenantId+"_pass");
         getDbMapper().save(subscriber);
@@ -258,6 +259,38 @@ public class DynamoClient {
 
         List<DSubscriberTenant> tenants = getDbMapper().query(DSubscriberTenant.class, queryExpression);
         System.out.format("Printing tenants for msisdn: "+msisdn+"\n");
+        tenants.stream().forEach(System.out::println);
+
+    }
+
+    private void getTenantCreds() {
+
+        String tenantId = "1";
+        String tenantCredId = TENANT_TABLE_PARTITION_KEY_PREFIX+tenantId;
+        Map<String, String> expressionAttributesNames = new HashMap<>();
+
+        String expressionPartitionAttrName = "#"+TABLE_PARTITION_KEY_NAME;
+        String expressionSortAttrName = "#"+TABLE_SORT_KEY_NAME;
+
+        String expressionPartitionAttrValue = ":"+TABLE_PARTITION_KEY_NAME;
+        String expressionSortAttrValue = ":"+TABLE_SORT_KEY_NAME;
+
+
+        expressionAttributesNames.put(expressionPartitionAttrName, TABLE_PARTITION_KEY_NAME);
+        expressionAttributesNames.put(expressionSortAttrName, TABLE_SORT_KEY_NAME);
+
+        Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
+        expressionAttributeValues.put(expressionPartitionAttrValue, new AttributeValue().withS(tenantCredId));
+        expressionAttributeValues.put(expressionSortAttrValue, new AttributeValue().withS(tenantId));
+
+
+        DynamoDBQueryExpression<DTenant> queryExpression = new DynamoDBQueryExpression<DTenant>()
+                .withKeyConditionExpression(expressionPartitionAttrName+" = "+expressionPartitionAttrValue+" and "+expressionSortAttrName+" = "+expressionSortAttrValue)
+                .withExpressionAttributeNames(expressionAttributesNames)
+                .withExpressionAttributeValues(expressionAttributeValues).withConsistentRead(true);
+
+        List<DTenant> tenants = getDbMapper().query(DTenant.class, queryExpression);
+        System.out.format("Printing tenants creds for tenant id: "+tenantId+" and tenant cred id:"+tenantCredId+"\n");
         tenants.stream().forEach(System.out::println);
 
     }
